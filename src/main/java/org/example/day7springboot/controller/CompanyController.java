@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,11 +24,12 @@ public class CompanyController {
     companies.add(company);
     return company;
   }
-
   @GetMapping("/companies")
   public List<Company> getAllCompanies() {
     return companies;
   }
+
+
 
   @GetMapping("/companies/{name}")
   public Company getCompanyByName(@PathVariable String name) {
@@ -57,5 +59,23 @@ public class CompanyController {
       }
     }
     return "Company not found";
+  }
+
+  @GetMapping("/companies1")
+  public Object getAllCompanies(@RequestParam(required = false) Integer page,
+    @RequestParam(required = false) Integer size) {
+    // 如果没有分页参数，返回所有公司
+    if (page == null || size == null) {
+      return companies;
+    }
+
+    // 简单的分页逻辑
+    int startIndex = (page - 1) * size;
+    if (startIndex >= companies.size()) {
+      return new ArrayList<>();
+    }
+
+    int endIndex = Math.min(startIndex + size, companies.size());
+    return companies.subList(startIndex, endIndex);
   }
 }
