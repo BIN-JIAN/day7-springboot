@@ -1,0 +1,38 @@
+package org.example.day7springboot.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.example.day7springboot.entity.Company;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class CompanyController {
+  private List<Company> companies = new ArrayList<>();
+
+  @PostMapping("/companies")
+  public Company createCompany(@RequestBody Company company) {
+    company.setId(companies.size() + 1);
+    companies.add(company);
+    return company;
+  }
+
+  @GetMapping("/companies")
+  public List<Company> getAllCompanies() {
+    return companies;
+  }
+
+  @GetMapping("/companies/{name}")
+  public Company getCompanyByName(@PathVariable String name) {
+    return companies.stream()
+      .filter(company -> company.getName().equals(name))
+      .findFirst()
+      .orElse(null);
+  }
+
+
+}

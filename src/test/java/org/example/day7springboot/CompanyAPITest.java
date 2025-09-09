@@ -32,7 +32,7 @@ public class CompanyAPITest {
         .content(requestBody))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.name").value("Tech Corp"));
+        .andExpect(jsonPath("$.name").value("Tech"));
   }
 
 
