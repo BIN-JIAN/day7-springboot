@@ -2,6 +2,7 @@ package org.example.day7springboot;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -116,6 +117,43 @@ class Day7SpringbootApplicationTests {
         .andExpect(jsonPath("$[0].name").value("John"))
         .andExpect(jsonPath("$[1].id").value(2))
         .andExpect(jsonPath("$[1].name").value("Alice"));
+  }
+
+  @Test
+  void should_update_employee_when_put_with_valid_id() throws Exception {
+    String createRequestBody = """
+      {
+        "name":"John",
+        "age": 30,
+        "gender": "MALE",
+        "salary": 6000
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody));
+
+    String updateRequestBody = """
+      {
+        "name":"John Smith",
+        "age": 35,
+        "gender": "MALE",
+        "salary": 8000
+      }
+      """;
+    mockMvc.perform(put("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(updateRequestBody))
+        .andExpect(status().isNoContent());
+
+    mockMvc.perform(get("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("John Smith"))
+        .andExpect(jsonPath("$.age").value(35))
+        .andExpect(jsonPath("$.gender").value("MALE"))
+        .andExpect(jsonPath("$.salary").value(8000.0));
   }
 
 
