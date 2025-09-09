@@ -2,6 +2,7 @@ package org.example.day7springboot;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,6 +84,35 @@ public class CompanyAPITest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.name").value("Microsoft"));
+  }
+  @Test
+  void should_update_company_when_put_with_valid_id() throws Exception {
+    // 先创建一个公司
+    String createRequestBody = """
+      {
+        "name":"OOCL"
+      }
+      """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody));
+
+    String updateRequestBody = """
+      {
+        "name":"CARGO"
+      }
+      """;
+    mockMvc.perform(put("/companies/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(updateRequestBody))
+        .andExpect(status().isOk());
+
+    //
+    mockMvc.perform(get("/companies/CARGO")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("CARGO"));
   }
 
 
