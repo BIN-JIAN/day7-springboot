@@ -3,10 +3,19 @@ package org.example.day7springboot.entity;
 public class Employee {
 
   private long id;
-  private String namae;
+  private String name;
   private int age;
   private double salary;
   private String gender;
+
+  public Employee(long id , String name, int age, String gender, double salary) {
+    this.id = id;
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+    this.salary = salary;
+
+  }
 
   public long getId() {
     return id;
@@ -16,12 +25,12 @@ public class Employee {
     this.id = id;
   }
 
-  public String getNamae() {
-    return namae;
+  public String getName() {
+    return name;
   }
 
-  public void setNamae(String namae) {
-    this.namae = namae;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public int getAge() {
