@@ -181,4 +181,103 @@ class Day7SpringbootApplicationTests {
         .andExpect(jsonPath("$").doesNotExist());
   }
 
+  @Test
+  void should_get_paginated_employees_with_page_info_employees1() throws Exception {
+    for (int i = 1; i <= 5; i++) {
+      String requestBody = String.format("""
+        {
+          "name":"Employee%d",
+          "age": %d,
+          "gender": "MALE",
+          "salary": %d
+        }
+        """, i, 20 + i, 5000);
+      mockMvc.perform(post("/employees")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(requestBody));
+    }
+    mockMvc.perform(get("/employees1?page=1&size=3")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").isArray())
+        .andExpect(jsonPath("$.data.length()").value(3))
+        .andExpect(jsonPath("$.page").value(1))
+        .andExpect(jsonPath("$.size").value(3))
+        .andExpect(jsonPath("$.total").value(5))
+        .andExpect(jsonPath("$.totalPages").value(2))
+        .andExpect(jsonPath("$.data[0].name").value("Employee1"))
+        .andExpect(jsonPath("$.data[1].name").value("Employee2"))
+        .andExpect(jsonPath("$.data[2].name").value("Employee3"));
+
+    // 测试第二页
+    mockMvc.perform(get("/employees1?page=2&size=3")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").isArray())
+        .andExpect(jsonPath("$.data.length()").value(2))
+        .andExpect(jsonPath("$.page").value(2))
+        .andExpect(jsonPath("$.size").value(3))
+        .andExpect(jsonPath("$.total").value(5))
+        .andExpect(jsonPath("$.totalPages").value(2))
+        .andExpect(jsonPath("$.data[0].name").value("Employee4"))
+        .andExpect(jsonPath("$.data[1].name").value("Employee5"));
+  }
+
+  @Test
+  void should_return_empty_data_when_page_exceeds_total_employees1() throws Exception {
+    for (int i = 1; i <= 2; i++) {
+      String requestBody = String.format("""
+        {
+          "name":"Employee%d",
+          "age": 25,
+          "gender": "MALE",
+          "salary": 5000
+        }
+        """, i);
+      mockMvc.perform(post("/employees")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(requestBody));
+    }
+    // 请求超出范围的页数
+    mockMvc.perform(get("/employees1?page=5&size=3")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").isArray())
+        .andExpect(jsonPath("$.data.length()").value(0))
+        .andExpect(jsonPath("$.page").value(5))
+        .andExpect(jsonPath("$.size").value(3))
+        .andExpect(jsonPath("$.total").value(2))
+        .andExpect(jsonPath("$.totalPages").value(1));
+  }
+
+  @Test
+  void should_return_all_employees_with_default_page_info_when_no_params() throws Exception {
+    for (int i = 1; i <= 3; i++) {
+      String requestBody = String.format("""
+        {
+          "name":"Employee%d",
+          "age": 25,
+          "gender": "MALE",
+          "salary": 5000
+        }
+        """, i);
+      mockMvc.perform(post("/employees")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(requestBody));
+    }
+    // 不传分页参数
+    mockMvc.perform(get("/employees1")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").isArray())
+        .andExpect(jsonPath("$.data.length()").value(3))
+        .andExpect(jsonPath("$.page").value(1))
+        .andExpect(jsonPath("$.size").value(3))
+        .andExpect(jsonPath("$.total").value(3))
+        .andExpect(jsonPath("$.totalPages").value(1))
+        .andExpect(jsonPath("$.data[0].name").value("Employee1"))
+        .andExpect(jsonPath("$.data[1].name").value("Employee2"))
+        .andExpect(jsonPath("$.data[2].name").value("Employee3"));
+  }
+
 }
