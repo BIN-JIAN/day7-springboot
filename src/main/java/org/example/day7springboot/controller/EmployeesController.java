@@ -3,6 +3,7 @@ package org.example.day7springboot.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,29 +78,18 @@ public class EmployeesController {
 
 
   @GetMapping("/employees1")
-  public Map<String, Object> getAllEmployees(@RequestParam(required = false) Integer page,
+  public Object getAllEmployees1(@RequestParam(required = false) Integer page,
     @RequestParam(required = false) Integer size) {
-    List<Employee> pageData = employees;
-    //
-    if (page != null && size != null) {
-      int startIndex = (page - 1) * size;
-      if (startIndex >= employees.size()) {
-        pageData = new ArrayList<>();
-      } else {
-        int endIndex = Math.min(startIndex + size, employees.size());
-        pageData = employees.subList(startIndex, endIndex);
-      }
+    if (page == null || size == null) {
+      return employees;
     }
-    return createPageResponse(pageData, page, size, employees.size());
-  }
-  private Map<String, Object> createPageResponse(List<Employee> data, Integer page, Integer size, int total) {
-    Map<String, Object> response = new HashMap<>();
-    response.put("data", data);
-    response.put("page", page != null ? page : 1);
-    response.put("size", size != null ? size : total);
-    response.put("total", total);
-    response.put("totalPages", (int) Math.ceil((double) total / (size != null ? size : total)));
-    return response;
+
+    int startIndex = (page - 1) * size;
+    if (startIndex >= employees.size()) {
+      return new ArrayList<>();
+    }
+    int endIndex = Math.min(startIndex + size, employees.size());
+    return employees.subList(startIndex, endIndex);
   }
 
 }

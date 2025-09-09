@@ -18,24 +18,25 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 class Day7SpringbootApplicationTests {
+
   @Autowired
   private MockMvc mockMvc;
 
   @Test
   void should_create_a_employee_when_post_then_return_id() throws Exception {
     String requestBody = """
-                       {   
-                          "name":"John",
-                          "age": 30,
-                          "gender": "MALE",
-                          "salary": 6000
-                         }
-          
-            """;
-       mockMvc.perform(post("/employees")
-         .contentType(MediaType.APPLICATION_JSON)
-         .content(requestBody))
-         .andExpect(jsonPath("$.id").value(1));
+                 {   
+                    "name":"John",
+                    "age": 30,
+                    "gender": "MALE",
+                    "salary": 6000
+                   }
+      
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(jsonPath("$.id").value(1));
 
   }
 
@@ -50,17 +51,17 @@ class Day7SpringbootApplicationTests {
       }
       """;
     mockMvc.perform(post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody));
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(requestBody));
 
     mockMvc.perform(get("/employees/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.name").value("John"))
-        .andExpect(jsonPath("$.age").value(30))
-        .andExpect(jsonPath("$.gender").value("MALE"))
-        .andExpect(jsonPath("$.salary").value(6000.0));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id").value(1))
+      .andExpect(jsonPath("$.name").value("John"))
+      .andExpect(jsonPath("$.age").value(30))
+      .andExpect(jsonPath("$.gender").value("MALE"))
+      .andExpect(jsonPath("$.salary").value(6000.0));
   }
 
   @Test
@@ -105,19 +106,19 @@ class Day7SpringbootApplicationTests {
       }
       """;
     mockMvc.perform(post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody1));
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(requestBody1));
     mockMvc.perform(post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody2));
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(requestBody2));
 
     mockMvc.perform(get("/employees")
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].id").value(1))
-        .andExpect(jsonPath("$[0].name").value("John"))
-        .andExpect(jsonPath("$[1].id").value(2))
-        .andExpect(jsonPath("$[1].name").value("Alice"));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$[0].id").value(1))
+      .andExpect(jsonPath("$[0].name").value("John"))
+      .andExpect(jsonPath("$[1].id").value(2))
+      .andExpect(jsonPath("$[1].name").value("Alice"));
   }
 
   @Test
@@ -131,8 +132,8 @@ class Day7SpringbootApplicationTests {
       }
       """;
     mockMvc.perform(post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(createRequestBody));
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(createRequestBody));
 
     String updateRequestBody = """
       {
@@ -145,16 +146,16 @@ class Day7SpringbootApplicationTests {
     mockMvc.perform(put("/employees/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON)
         .content(updateRequestBody))
-        .andExpect(status().isNoContent());
+      .andExpect(status().isNoContent());
 
     mockMvc.perform(get("/employees/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.name").value("John Smith"))
-        .andExpect(jsonPath("$.age").value(35))
-        .andExpect(jsonPath("$.gender").value("MALE"))
-        .andExpect(jsonPath("$.salary").value(8000.0));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id").value(1))
+      .andExpect(jsonPath("$.name").value("John Smith"))
+      .andExpect(jsonPath("$.age").value(35))
+      .andExpect(jsonPath("$.gender").value("MALE"))
+      .andExpect(jsonPath("$.salary").value(8000.0));
   }
 
   @Test
@@ -168,21 +169,22 @@ class Day7SpringbootApplicationTests {
       }
       """;
     mockMvc.perform(post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(createRequestBody));
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(createRequestBody));
 
     mockMvc.perform(delete("/employees/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNoContent());
+      .andExpect(status().isNoContent());
 
     mockMvc.perform(get("/employees/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").doesNotExist());
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$").doesNotExist());
   }
 
   @Test
   void should_get_paginated_employees_with_page_info_employees1() throws Exception {
+    // 创建5个员工用于分页测试
     for (int i = 1; i <= 5; i++) {
       String requestBody = String.format("""
         {
@@ -193,34 +195,28 @@ class Day7SpringbootApplicationTests {
         }
         """, i, 20 + i, 5000);
       mockMvc.perform(post("/employees")
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(requestBody));
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
     }
+
+    // 测试第一页，每页3条数据
     mockMvc.perform(get("/employees1?page=1&size=3")
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data").isArray())
-        .andExpect(jsonPath("$.data.length()").value(3))
-        .andExpect(jsonPath("$.page").value(1))
-        .andExpect(jsonPath("$.size").value(3))
-        .andExpect(jsonPath("$.total").value(5))
-        .andExpect(jsonPath("$.totalPages").value(2))
-        .andExpect(jsonPath("$.data[0].name").value("Employee1"))
-        .andExpect(jsonPath("$.data[1].name").value("Employee2"))
-        .andExpect(jsonPath("$.data[2].name").value("Employee3"));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$").isArray())
+      .andExpect(jsonPath("$.length()").value(3))
+      .andExpect(jsonPath("$[0].name").value("Employee1"))
+      .andExpect(jsonPath("$[1].name").value("Employee2"))
+      .andExpect(jsonPath("$[2].name").value("Employee3"));
 
-    // 测试第二页
+    // 测试第二页，每页3条数据（应该只有2条）
     mockMvc.perform(get("/employees1?page=2&size=3")
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data").isArray())
-        .andExpect(jsonPath("$.data.length()").value(2))
-        .andExpect(jsonPath("$.page").value(2))
-        .andExpect(jsonPath("$.size").value(3))
-        .andExpect(jsonPath("$.total").value(5))
-        .andExpect(jsonPath("$.totalPages").value(2))
-        .andExpect(jsonPath("$.data[0].name").value("Employee4"))
-        .andExpect(jsonPath("$.data[1].name").value("Employee5"));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$").isArray())
+      .andExpect(jsonPath("$.length()").value(2))
+      .andExpect(jsonPath("$[0].name").value("Employee4"))
+      .andExpect(jsonPath("$[1].name").value("Employee5"));
   }
 
   @Test
@@ -235,19 +231,14 @@ class Day7SpringbootApplicationTests {
         }
         """, i);
       mockMvc.perform(post("/employees")
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(requestBody));
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
     }
-    // 请求超出范围的页数
+    //
     mockMvc.perform(get("/employees1?page=5&size=3")
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data").isArray())
-        .andExpect(jsonPath("$.data.length()").value(0))
-        .andExpect(jsonPath("$.page").value(5))
-        .andExpect(jsonPath("$.size").value(3))
-        .andExpect(jsonPath("$.total").value(2))
-        .andExpect(jsonPath("$.totalPages").value(1));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.length()").value(0));
   }
 
   @Test
@@ -262,22 +253,18 @@ class Day7SpringbootApplicationTests {
         }
         """, i);
       mockMvc.perform(post("/employees")
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(requestBody));
-    }
-    // 不传分页参数
-    mockMvc.perform(get("/employees1")
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data").isArray())
-        .andExpect(jsonPath("$.data.length()").value(3))
-        .andExpect(jsonPath("$.page").value(1))
-        .andExpect(jsonPath("$.size").value(3))
-        .andExpect(jsonPath("$.total").value(3))
-        .andExpect(jsonPath("$.totalPages").value(1))
-        .andExpect(jsonPath("$.data[0].name").value("Employee1"))
-        .andExpect(jsonPath("$.data[1].name").value("Employee2"))
-        .andExpect(jsonPath("$.data[2].name").value("Employee3"));
-  }
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
 
+      mockMvc.perform(get("/employees1")
+          .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].name").value("Employee1"))
+        .andExpect(jsonPath("$[1].name").value("Employee2"))
+        .andExpect(jsonPath("$[2].name").value("Employee3"));
+
+    }
+
+  }
 }
