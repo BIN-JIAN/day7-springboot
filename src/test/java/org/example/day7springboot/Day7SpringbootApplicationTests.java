@@ -1,5 +1,6 @@
 package org.example.day7springboot;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -156,5 +157,28 @@ class Day7SpringbootApplicationTests {
         .andExpect(jsonPath("$.salary").value(8000.0));
   }
 
+  @Test
+  void should_delete_employee_when_delete_with_valid_id() throws Exception {
+    String createRequestBody = """
+      {
+        "name":"John",
+        "age": 30,
+        "gender": "MALE",
+        "salary": 6000
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody));
+
+    mockMvc.perform(delete("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+
+    mockMvc.perform(get("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").doesNotExist());
+  }
 
 }
