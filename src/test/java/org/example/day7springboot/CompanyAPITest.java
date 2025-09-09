@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CompanyAPITest {
 
   @Autowired
@@ -137,7 +139,62 @@ public class CompanyAPITest {
         .andExpect(jsonPath("$").doesNotExist());
   }
 
+  @Test
+  void should_get_paginated_companies_when_page_params_provided() throws Exception {
+    for (int i = 1; i <= 5; i++) {
+      String requestBody = String.format("""
+        {
+          "name":"Company%d"
+        }
+        """, i);
+      mockMvc.perform(post("/companies")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(requestBody));
+    }
 
+    mockMvc.perform(get("/companies1?page=1&size=3")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(3))
+        .andExpect(jsonPath("$[0].name").value("Company1"))
+        .andExpect(jsonPath("$[1].name").value("Company2"))
+        .andExpect(jsonPath("$[2].name").value("Company3"));
+
+    //第二页只有2条
+    mockMvc.perform(get("/companies1?page=2&size=3")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].name").value("Company4"))
+        .andExpect(jsonPath("$[1].name").value("Company5"));
+  }
+
+
+  @Test
+  void should_return_all_companies_when_no_page_params() throws Exception {
+
+    for (int i = 1; i <= 3; i++) {
+      String requestBody = String.format("""
+        {
+          "name":"Company%d"
+        }
+        """, i);
+      mockMvc.perform(post("/companies")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(requestBody));
+    }
+
+    mockMvc.perform(get("/companies1")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(3))
+        .andExpect(jsonPath("$[0].name").value("Company1"))
+        .andExpect(jsonPath("$[1].name").value("Company2"))
+        .andExpect(jsonPath("$[2].name").value("Company3"));
+  }
 
 
 }
