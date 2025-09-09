@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.example.day7springboot.entity.Employee;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,5 +45,15 @@ public class EmployeesController {
     return employees;
   }
 
+  @PutMapping("/employees/{id}")
+  public ResponseEntity<Void> updateEmployee(@PathVariable long id, @RequestBody Employee updatedEmployee) {
+    for (int i = 0; i < employees.size(); i++) {
+      if (employees.get(i).getId() == id) {
+        updatedEmployee.setId(id);
+        employees.set(i, updatedEmployee);
+        return ResponseEntity.noContent().build();
+      }
+    }
+    return ResponseEntity.notFound().build();
+  }
 }
-
