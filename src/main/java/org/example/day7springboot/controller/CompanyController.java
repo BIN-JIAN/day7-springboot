@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.example.day7springboot.entity.Company;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CompanyController {
+
   private List<Company> companies = new ArrayList<>();
 
   @PostMapping("/companies")
@@ -46,4 +48,14 @@ public class CompanyController {
     return "Company not found";
   }
 
+  @DeleteMapping("/companies/{id}")
+  public String deleteCompany(@PathVariable int id) {
+    for (int i = 0; i < companies.size(); i++) {
+      if (companies.get(i).getId() == id) {
+        companies.remove(i);
+        return "Company deleted successfully";
+      }
+    }
+    return "Company not found";
+  }
 }

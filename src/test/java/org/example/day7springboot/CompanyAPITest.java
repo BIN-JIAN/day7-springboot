@@ -1,5 +1,6 @@
 package org.example.day7springboot;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -87,7 +88,6 @@ public class CompanyAPITest {
   }
   @Test
   void should_update_company_when_put_with_valid_id() throws Exception {
-    // 先创建一个公司
     String createRequestBody = """
       {
         "name":"OOCL"
@@ -115,7 +115,27 @@ public class CompanyAPITest {
         .andExpect(jsonPath("$.name").value("CARGO"));
   }
 
+  @Test
+  void should_delete_company_when_delete_with_valid_id() throws Exception {
+    String createRequestBody = """
+      {
+        "name":"OOCL"
+      }
+      """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody));
 
+    mockMvc.perform(delete("/companies/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value("Company deleted successfully"));
+
+    mockMvc.perform(get("/companies/OOCL")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").doesNotExist());
+  }
 
 
 
