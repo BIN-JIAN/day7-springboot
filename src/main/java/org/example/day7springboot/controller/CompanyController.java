@@ -7,6 +7,7 @@ import org.example.day7springboot.entity.Company;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +35,15 @@ public class CompanyController {
       .orElse(null);
   }
 
+  @PutMapping("/companies/{id}")
+  public String updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) {
+    for (Company company : companies) {
+      if (company.getId() == id) {
+        company.setName(updatedCompany.getName());
+        return "Company updated successfully";
+      }
+    }
+    return "Company not found";
+  }
 
 }
