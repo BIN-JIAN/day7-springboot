@@ -38,5 +38,10 @@ public class EmployeesController {
       .collect(Collectors.toList());
   }
 
+  @GetMapping("/employees")
+  public List<Employee> getAllEmployees() {
+    return employees;
+  }
+
 }
 
