@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.example.day7springboot.entity.Employee;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,17 @@ public class EmployeesController {
       if (employees.get(i).getId() == id) {
         updatedEmployee.setId(id);
         employees.set(i, updatedEmployee);
+        return ResponseEntity.noContent().build();
+      }
+    }
+    return ResponseEntity.notFound().build();
+  }
+
+  @DeleteMapping("/employees/{id}")
+  public ResponseEntity<Void> deleteEmployee(@PathVariable long id) {
+    for(int i = 0; i< employees.size();i++){
+      if(employees.get(i).getId() == id){
+        employees.remove(i);
         return ResponseEntity.noContent().build();
       }
     }
