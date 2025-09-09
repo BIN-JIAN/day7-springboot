@@ -82,7 +82,40 @@ class Day7SpringbootApplicationTests {
       .andExpect(jsonPath("$[0].age").value(30))
       .andExpect(jsonPath("$[0].gender").value("male"))
       .andExpect(jsonPath("$[0].salary").value(6000.0));
+  }
 
+  @Test
+  void should_get_all_employees_when_call_get_all() throws Exception {
+    String requestBody1 = """
+      {
+        "name":"John",
+        "age": 30,
+        "gender": "MALE",
+        "salary": 6000
+      }
+      """;
+    String requestBody2 = """
+      {
+        "name":"Alice",
+        "age": 28,
+        "gender": "FEMALE",
+        "salary": 7000
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody1));
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody2));
+
+    mockMvc.perform(get("/employees")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].name").value("John"))
+        .andExpect(jsonPath("$[1].id").value(2))
+        .andExpect(jsonPath("$[1].name").value("Alice"));
   }
 
 
