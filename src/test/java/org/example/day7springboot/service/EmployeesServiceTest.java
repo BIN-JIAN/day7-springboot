@@ -94,8 +94,19 @@ class EmployeesServiceTest {
     });
   }
 
-  @Test
-  void should_different_name_and_gender_when_create_then_pass(){
 
+  @Test
+  void should_create_employee_when_age_above_30_and_salary_above_20000_then_pass() {
+    Employee employee = new Employee();
+    employee.setId(1);
+    employee.setAge(35);
+    employee.setName("Tom");
+    employee.setGender("MALE");
+    employee.setSalary(25000.0);
+
+    assertDoesNotThrow(() -> {
+      employeesService.createEmployee(employee);
+    });
+    verify(employeeRepositry, times(1)).save(employee);
   }
 }
