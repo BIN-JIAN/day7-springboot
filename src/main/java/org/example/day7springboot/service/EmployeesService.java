@@ -17,7 +17,7 @@ public class EmployeesService {
   private EmployeeRepositry employeeRepositry;
 
 
-  public Map<String, Long> createEmployee( Employee employee) throws BigAgeAndLowSalaryException {
+  public Map<String, Long> createEmployee( Employee employee)  {
     if(employee.getAge() < 18 || employee.getAge() > 65) {
       throw new NotAmongLegalAgeException("Employee age must be between 18 and 65.");
     }

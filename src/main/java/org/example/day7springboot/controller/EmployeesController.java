@@ -25,16 +25,9 @@ public class EmployeesController {
   private EmployeesService employeesService;
 
   @PostMapping("/employees")
-  public ResponseEntity<Map<String, Long>> createEmployee(@RequestBody Employee employee) {
-    try {
-      Map<String, Long> response = employeesService.createEmployee(employee);
-      return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    } catch (NotAmongLegalAgeException | BigAgeAndLowSalaryException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .build();
-    }
+  public Map<String, Long> createEmployee(@RequestBody Employee employee) {
+    return employeesService.createEmployee(employee);
   }
-
   @GetMapping("/employees/{id}")
   public Employee getEmployee(@PathVariable long id) {
    return employeesService.getEmployee(id);
