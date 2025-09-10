@@ -250,5 +250,23 @@ class EmployeesTests {
       .andExpect(jsonPath("$.length()").value(0));
   }
 
+  @Test
+  void should_age_exceed_30_and_salary_below_20000_when_post_then_not_create() throws Exception {
+    for (int i = 1; i <= 2; i++) {
+      String requestBody = String.format("""
+        {
+          "name":"Employee%d",
+          "age": 35,
+          "gender": "MALE",
+          "salary": 5000
+        }
+        """, i);
+      mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(status().isBadRequest());
+    }
+  }
+
   }
 

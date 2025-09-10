@@ -6,22 +6,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.example.day7springboot.entity.Employee;
-import org.example.day7springboot.repository.EmployeeRepositry;
+import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
+import org.example.day7springboot.exception.NotAmongLegalAgeException;
+import org.example.day7springboot.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 class EmployeesServiceTest {
 
   @Mock
-  private EmployeeRepositry employeeRepositry;
+  private EmployeeRepository employeeRepositry;
   @InjectMocks
   private EmployeesService employeesService;
 
@@ -94,5 +94,8 @@ class EmployeesServiceTest {
     });
   }
 
+  @Test
+  void should_different_name_and_gender_when_create_then_pass(){
 
+  }
 }

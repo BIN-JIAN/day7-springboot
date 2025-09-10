@@ -6,10 +6,10 @@ import org.example.day7springboot.entity.Employee;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EmployeeRepositry {
+public class EmployeeRepository {
   private List<Employee> employees = new ArrayList<>();
 
-  public void saveEmployee(Employee employee) {
+  public void save(Employee employee) {
     employee.setId(employees.size() + 1);
     employees.add(employee);
   }
@@ -21,14 +21,11 @@ public class EmployeeRepositry {
       .orElse(null);
   }
 
-  public List<Employee> getEmployeesByGender(String gender) {
-    return employees.stream()
-      .filter(e -> e.getGender().equals(gender))
-      .toList();
+  public List<Employee> findAll() {
+    return employees;
   }
 
-
-  public boolean updateEmployee(long id, Employee employee) {
+  public boolean update(long id, Employee employee) {
     for (int i = 0; i < employees.size(); i++) {
       if (employees.get(i).getId() == id) {
         employee.setId(id);
@@ -39,7 +36,7 @@ public class EmployeeRepositry {
     return false;
   }
 
-  public boolean deleteEmployee(long id) {
+  public boolean delete(long id) {
     for (int i = 0; i < employees.size(); i++) {
       if (employees.get(i).getId() == id) {
         employees.remove(i);
@@ -49,12 +46,7 @@ public class EmployeeRepositry {
     return false;
   }
 
-  public List<Employee> getEmployees() {
-    return employees;
-  }
-
   public void clear() {
     employees.clear();
   }
-
 }

@@ -1,6 +1,7 @@
 package org.example.day7springboot.controller;
 
-import org.example.day7springboot.service.NotAmongLegalAgeException;
+import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
+import org.example.day7springboot.exception.NotAmongLegalAgeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,6 +14,12 @@ public class GlobalExceptionHander {
   @ExceptionHandler(NotAmongLegalAgeException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public String handNotAmongLegalAgeException(Exception e){
+    return e.getMessage();
+  }
+
+  @ExceptionHandler(BigAgeAndLowSalaryException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public String BigAgeAndLowSalaryException(Exception e){
     return e.getMessage();
   }
 

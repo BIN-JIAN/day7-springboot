@@ -1,4 +1,4 @@
-package org.example.day7springboot.service;
+package org.example.day7springboot.exception;
 
 public class NotAmongLegalAgeException extends RuntimeException{
 
