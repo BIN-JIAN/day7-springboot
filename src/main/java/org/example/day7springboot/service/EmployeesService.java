@@ -9,6 +9,7 @@ import org.example.day7springboot.repository.EmployeeRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.example.day7springboot.service.BigAgeAndLowSalaryException;
 
 @Service
 public class EmployeesService {
@@ -16,16 +17,21 @@ public class EmployeesService {
   private EmployeeRepositry employeeRepositry;
 
 
-  public Map<String, Long> createEmployee( Employee employee) {
-     employeeRepositry.saveEmployee(employee);
-    return Map.of("id", employee.getId());
+  public Map<String, Long> createEmployee( Employee employee) throws BigAgeAndLowSalaryException {
+    if(employee.getAge() < 18 || employee.getAge() > 65) {
+      throw new NotAmongLegalAgeException("Employee age must be between 18 and 65.");
+    }
+    else if(employee.getAge() > 30 && employee.getSalary() < 20000){
+      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
+    }
+    else {
+      employeeRepositry.saveEmployee(employee);
+      return Map.of("id", employee.getId());
+    }
   }
 
   public Employee getEmployee( long id) {
-    return employeeRepositry.getEmployees().stream()
-      .filter(employee-> employee.getId()==id)
-      .findFirst()
-      .orElse(null);
+    return employeeRepositry.findById(id);
   }
 
 
@@ -57,6 +63,7 @@ public class EmployeesService {
     }
     return ResponseEntity.notFound().build();
   }
+
 
   public Object getAllEmployees1(Integer page, Integer size) {
     if (page == null || size == null) {

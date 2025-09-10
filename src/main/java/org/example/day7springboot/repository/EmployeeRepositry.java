@@ -14,7 +14,7 @@ public class EmployeeRepositry {
     employees.add(employee);
   }
 
-  public Employee getEmployeeById(long id) {
+  public Employee findById(long id) {
     return employees.stream()
       .filter(e -> e.getId() == id)
       .findFirst()

@@ -1,18 +1,13 @@
 package org.example.day7springboot.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.example.day7springboot.entity.Employee;
+import org.example.day7springboot.service.BigAgeAndLowSalaryException;
 import org.example.day7springboot.service.EmployeesService;
+import org.example.day7springboot.service.NotAmongLegalAgeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +25,16 @@ public class EmployeesController {
   private EmployeesService employeesService;
 
   @PostMapping("/employees")
-  public Map<String, Long> createEmployee(@RequestBody Employee employee) {
-
-    return employeesService.createEmployee(employee);
+  public ResponseEntity<Map<String, Long>> createEmployee(@RequestBody Employee employee) {
+    try {
+      Map<String, Long> response = employeesService.createEmployee(employee);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    } catch (NotAmongLegalAgeException | BigAgeAndLowSalaryException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .build();
+    }
   }
+
   @GetMapping("/employees/{id}")
   public Employee getEmployee(@PathVariable long id) {
    return employeesService.getEmployee(id);
