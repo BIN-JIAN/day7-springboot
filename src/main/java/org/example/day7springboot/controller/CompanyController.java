@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.example.day7springboot.entity.Company;
 
+import org.example.day7springboot.service.CompanyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,65 +19,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CompanyController {
 
-  private List<Company> companies = new ArrayList<>();
+  @Autowired
+  private CompanyService companyService;
 
   @PostMapping("/companies")
   public Company createCompany(@RequestBody Company company) {
-    company.setId(companies.size() + 1);
-    companies.add(company);
-    return company;
+    return companyService.createCompany(company);
   }
+
   @GetMapping("/companies")
   public List<Company> getAllCompanies() {
-    return companies;
+    return companyService.getCompanies();
   }
-
-
 
   @GetMapping("/companies/{name}")
   public Company getCompanyByName(@PathVariable String name) {
-    return companies.stream()
-      .filter(company -> company.getName().equals(name))
-      .findFirst()
-      .orElse(null);
+    return companyService.getCompanyByName(name);
   }
 
+//
   @PutMapping("/companies/{id}")
   public String updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) {
-    for (Company company : companies) {
-      if (company.getId() == id) {
-        company.setName(updatedCompany.getName());
-        return "Company updated successfully";
-      }
-    }
-    return "Company not found";
+      return companyService.updateCompany(id,updatedCompany);
   }
-
+//
   @DeleteMapping("/companies/{id}")
-  public String deleteCompany(@PathVariable int id) {
-    for (int i = 0; i < companies.size(); i++) {
-      if (companies.get(i).getId() == id) {
-        companies.remove(i);
-        return "Company deleted successfully";
-      }
-    }
-    return "Company not found";
+  public ResponseEntity<Void> deleteCompany(@PathVariable int id) {
+  return companyService.deleteCompany(id);
   }
-
+//  //该类型 加一个异常处理器
+//
   @GetMapping("/companies1")
-  public Object getAllCompanies(@RequestParam(required = false) Integer page,
+  public Object getAllCompanies(
+    @RequestParam(required = false) Integer page,
     @RequestParam(required = false) Integer size) {
-    if (page == null || size == null) {
-      return companies;
-    }
-
-
-    int startIndex = (page - 1) * size;
-    if (startIndex >= companies.size()) {
-      return new ArrayList<>();
-    }
-
-    int endIndex = Math.min(startIndex + size, companies.size());
-    return companies.subList(startIndex, endIndex);
+  return companyService.getAllCompanies(page,size);
   }
+
+  public void clearCompanies() {
+     companyService.clearCompanies();
+  }
+
+
 }

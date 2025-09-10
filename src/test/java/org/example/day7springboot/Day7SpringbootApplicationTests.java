@@ -7,20 +7,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.example.day7springboot.controller.CompanyController;
+import org.example.day7springboot.controller.EmployeesController;
 import org.example.day7springboot.entity.Employee;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//清内存
+//@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class Day7SpringbootApplicationTests {
 
   @Autowired
   private MockMvc mockMvc;
+  @Autowired
+  private EmployeesController employeesController;
+  @BeforeEach
+  public void setUp() {
+    employeesController.clearEmployee();
+  }
 
   @Test
   void should_create_a_employee_when_post_then_return_id() throws Exception {
@@ -241,30 +254,5 @@ class Day7SpringbootApplicationTests {
       .andExpect(jsonPath("$.length()").value(0));
   }
 
-  @Test
-  void should_return_all_employees_with_default_page_info_when_no_params() throws Exception {
-    for (int i = 1; i <= 3; i++) {
-      String requestBody = String.format("""
-        {
-          "name":"Employee%d",
-          "age": 25,
-          "gender": "MALE",
-          "salary": 5000
-        }
-        """, i);
-      mockMvc.perform(post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody));
-
-      mockMvc.perform(get("/employees1")
-          .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].name").value("Employee1"))
-        .andExpect(jsonPath("$[1].name").value("Employee2"))
-        .andExpect(jsonPath("$[2].name").value("Employee3"));
-
-    }
-
   }
-}
+

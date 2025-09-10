@@ -7,6 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.example.day7springboot.controller.CompanyController;
+import org.example.day7springboot.service.CompanyService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,11 +20,19 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CompanyAPITest {
 
   @Autowired
   private MockMvc mockMvc;
+  @Autowired
+  private CompanyController controller;
+
+  @BeforeEach
+  public void setUp() {
+    controller.clearCompanies();
+  }
 
   @Test
   void should_create_company_when_post_valid_company() throws Exception {
@@ -130,8 +141,7 @@ public class CompanyAPITest {
 
     mockMvc.perform(delete("/companies/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value("Company deleted successfully"));
+        .andExpect(status().isNoContent());
 
     mockMvc.perform(get("/companies/OOCL")
         .contentType(MediaType.APPLICATION_JSON))
