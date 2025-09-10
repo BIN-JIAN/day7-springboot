@@ -20,20 +20,12 @@ public class EmployeesService {
   private EmployeeRepository employeeRepository;
 
   public Map<String, Long> createEmployee(Employee employee) {
-    boolean exists = employeeRepository.findAll().stream()
-      .anyMatch(e -> e.getName().equals(employee.getName()) && e.getGender().equals(employee.getGender()));
-    if (exists) {
-      throw new DuplicateEmployeeException("Employee with same name and gender already exists.");
-    }
-    if (employee.getAge() < 18 || employee.getAge() > 65) {
-      throw new NotAmongLegalAgeException("Employee age must be between 18 and 65.");
-    } else if (employee.getAge() > 30 && employee.getSalary() < 20000) {
-      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
-    } else {
-      employeeRepository.save(employee);
-      return Map.of("id", employee.getId());
-    }
+    validEmployeeForCreate(employee);
+    employeeRepository.save(employee);
+    return Map.of("id", employee.getId());
   }
+
+
 
   public Employee getEmployee(long id) {
     return employeeRepository.findById(id);
@@ -54,12 +46,7 @@ public class EmployeesService {
     if (original == null) {
       return ResponseEntity.notFound().build();
     }
-    if (!original.isStatus()) {
-      throw new EmployeeStatusException("Employee status is false, cannot update.");
-    }
-    if (updatedEmployee.getSalary() < 20000 && updatedEmployee.getAge() > 30) {
-      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
-    }
+    validEmployeeForUpdate(original, updatedEmployee);
     boolean updated = employeeRepository.update(id, updatedEmployee);
     if (updated) {
       return ResponseEntity.noContent().build();
@@ -67,11 +54,13 @@ public class EmployeesService {
     return ResponseEntity.notFound().build();
   }
 
+
   public ResponseEntity<Void> deleteEmployee(long id) {
     Employee employee = employeeRepository.findById(id);
-    if (!employee.isStatus()) {
-      throw new EmployeeStatusException("Employee status is false, cannot delete.");
+    if (employee == null) {
+      return ResponseEntity.notFound().build();
     }
+    validEmployeeForDelete(employee);
     boolean deleted = employeeRepository.delete(id);
     if (deleted) {
       return ResponseEntity.noContent().build();
@@ -94,5 +83,32 @@ public class EmployeesService {
 
   public void clearEmployee() {
     employeeRepository.clear();
+  }
+  private void validEmployeeForCreate(Employee employee) {
+    if (employeeRepository.findAll().stream()
+      .anyMatch(e -> e.getName().equals(employee.getName()) && e.getGender().equals(employee.getGender()))) {
+      throw new DuplicateEmployeeException("Employee with same name and gender already exists.");
+    }
+    if (employee.getAge() < 18 || employee.getAge() > 65) {
+      throw new NotAmongLegalAgeException("Employee age must be between 18 and 65.");
+    }
+    if (employee.getAge() > 30 && employee.getSalary() < 20000) {
+      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
+    }
+  }
+
+  private void validEmployeeForUpdate(Employee original, Employee updatedEmployee) {
+    if (!original.isStatus()) {
+      throw new EmployeeStatusException("Employee status is false, cannot update.");
+    }
+    if (updatedEmployee.getSalary() < 20000 && updatedEmployee.getAge() > 30) {
+      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
+    }
+  }
+
+  private void validEmployeeForDelete(Employee employee) {
+    if (!employee.isStatus()) {
+      throw new EmployeeStatusException("Employee status is false, cannot delete.");
+    }
   }
 }
