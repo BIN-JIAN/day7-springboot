@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;
+import org.example.day7springboot.exception.EmployeeStatusException;
 import org.example.day7springboot.exception.NotAmongLegalAgeException;
 import org.example.day7springboot.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
@@ -150,5 +151,38 @@ class EmployeesServiceTest {
     assertDoesNotThrow( () -> {
       employeesService.createEmployee(newEmployee);
     });
+  }
+
+  @Test
+  void should_delete_employee_when_status_true_then_success() {
+    Employee employee = new Employee();
+    employee.setId(1);
+    employee.setName("Tom");
+    employee.setGender("MALE");
+    employee.setAge(30);
+    employee.setSalary(25000.0);
+    employee.setStatus(true);
+    when(employeeRepositry.findById(1)).thenReturn(employee);
+    when(employeeRepositry.delete(1)).thenReturn(true);
+    assertDoesNotThrow(() -> {
+      employeesService.deleteEmployee(1);
+    });
+    verify(employeeRepositry, times(1)).delete(1);
+  }
+
+  @Test
+  void should_not_delete_employee_when_status_false_then_throw_exception() {
+    Employee employee = new Employee();
+    employee.setId(1);
+    employee.setName("Tom");
+    employee.setGender("MALE");
+    employee.setAge(30);
+    employee.setSalary(25000.0);
+    employee.setStatus(false);
+    when(employeeRepositry.findById(1)).thenReturn(employee);
+    assertThrows(EmployeeStatusException.class, () -> {
+      employeesService.deleteEmployee(1);
+    });
+    verify(employeeRepositry, times(0)).delete(1);
   }
 }

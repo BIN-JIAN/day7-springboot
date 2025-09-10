@@ -317,4 +317,44 @@ class EmployeesTest {
         .content(requestBody1))
       .andExpect(status().isOk());
   }
+
+  @Test
+  void should_delete_employee_when_status_true_then_success() throws Exception {
+    String requestBody = """
+      {
+        "name":"Tom",
+        "age":30,
+        "gender":"MALE",
+        "salary":25000,
+        "status":true
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(status().isOk());
+    mockMvc.perform(delete("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void should_not_delete_employee_when_status_false_then_bad_request() throws Exception {
+    String requestBody = """
+      {
+        "name":"Tom",
+        "age":30,
+        "gender":"MALE",
+        "salary":25000,
+        "status":false
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(status().isOk());
+    mockMvc.perform(delete("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isBadRequest());
+  }
   }
