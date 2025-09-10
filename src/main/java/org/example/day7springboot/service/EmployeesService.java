@@ -50,6 +50,16 @@ public class EmployeesService {
   }
 
   public ResponseEntity<Void> updateEmployee(long id, Employee updatedEmployee) {
+    Employee original = employeeRepository.findById(id);
+    if (original == null) {
+      return ResponseEntity.notFound().build();
+    }
+    if (!original.isStatus()) {
+      throw new EmployeeStatusException("Employee status is false, cannot update.");
+    }
+    if (updatedEmployee.getSalary() < 20000 && updatedEmployee.getAge() > 30) {
+      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
+    }
     boolean updated = employeeRepository.update(id, updatedEmployee);
     if (updated) {
       return ResponseEntity.noContent().build();
