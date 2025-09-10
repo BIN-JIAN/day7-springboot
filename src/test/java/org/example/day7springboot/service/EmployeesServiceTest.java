@@ -131,4 +131,24 @@ class EmployeesServiceTest {
       employeesService.createEmployee(newEmployee);
     });
   }
+  @Test
+  void should_create_employee_with_same_name_and_different_gender_then_pass() {
+    Employee existing = new Employee();
+    existing.setId(1);
+    existing.setName("Tom");
+    existing.setGender("MALE");
+    existing.setAge(25);
+    existing.setSalary(30000.0);
+
+    Employee newEmployee = new Employee();
+    newEmployee.setId(2);
+    newEmployee.setName("Tom");
+    newEmployee.setGender("FEMALE");
+    newEmployee.setAge(30);
+    newEmployee.setSalary(25000.0);
+    when(employeeRepositry.findAll()).thenReturn(java.util.List.of(existing));
+    assertDoesNotThrow( () -> {
+      employeesService.createEmployee(newEmployee);
+    });
+  }
 }

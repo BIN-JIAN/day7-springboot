@@ -288,4 +288,33 @@ class EmployeesTest {
         .content(requestBody))
       .andExpect(status().isBadRequest());
   }
+
+  @Test
+  void should_create_employee_with_same_name_and_different_gender_then_pass() throws Exception {
+    String requestBody = """
+      {
+        "name":"Tom",
+        "age":30,
+        "gender":"MALE",
+        "salary":25000
+      }
+      """;
+    String requestBody1 = """
+      {
+        "name":"Tom",
+        "age":30,
+        "gender":"FEMALE",
+        "salary":25000
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(status().isOk());
+
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody1))
+      .andExpect(status().isOk());
+  }
   }
