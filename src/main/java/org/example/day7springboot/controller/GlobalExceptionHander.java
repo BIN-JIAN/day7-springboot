@@ -3,6 +3,7 @@ package org.example.day7springboot.controller;
 import java.security.DigestException;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;
+import org.example.day7springboot.exception.EmployeeStatusException;
 import org.example.day7springboot.exception.NotAmongLegalAgeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,16 +16,15 @@ public class GlobalExceptionHander {
 
   @ExceptionHandler(NotAmongLegalAgeException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public String handNotAmongLegalAgeException(Exception e){
+  public String handNotAmongLegalAgeException(Exception e) {
     return e.getMessage();
   }
 
   @ExceptionHandler(BigAgeAndLowSalaryException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public String BigAgeAndLowSalaryException(Exception e){
+  public String BigAgeAndLowSalaryException(Exception e) {
     return e.getMessage();
   }
-
 
 
   @ExceptionHandler(DuplicateEmployeeException.class)
@@ -33,4 +33,9 @@ public class GlobalExceptionHander {
     return e.getMessage();
   }
 
+  @ExceptionHandler(EmployeeStatusException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public String handleEmployeeStatusException(Exception e) {
+    return e.getMessage();
+  }
 }

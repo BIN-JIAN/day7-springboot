@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;
+import org.example.day7springboot.exception.EmployeeStatusException;
 
 @Service
 public class EmployeesService {
@@ -57,6 +58,10 @@ public class EmployeesService {
   }
 
   public ResponseEntity<Void> deleteEmployee(long id) {
+    Employee employee = employeeRepository.findById(id);
+    if (!employee.isStatus()) {
+      throw new EmployeeStatusException("Employee status is false, cannot delete.");
+    }
     boolean deleted = employeeRepository.delete(id);
     if (deleted) {
       return ResponseEntity.noContent().build();
