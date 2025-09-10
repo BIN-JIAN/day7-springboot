@@ -44,7 +44,7 @@ class EmployeesServiceTest {
   void should_not_legal_age_grater_65_when_post_then_not_create() {
     Employee employee = new Employee();
     employee.setId(1);
-    employee.setAge(65);
+    employee.setAge(66);
     employee.setName("jin");
     employee.setGender("MALE");
     employee.setSalary(3000.0);
@@ -162,8 +162,10 @@ class EmployeesServiceTest {
     employee.setAge(30);
     employee.setSalary(25000.0);
     employee.setStatus(true);
+
     when(employeeRepositry.findById(1)).thenReturn(employee);
     when(employeeRepositry.delete(1)).thenReturn(true);
+
     assertDoesNotThrow(() -> {
       employeesService.deleteEmployee(1);
     });
@@ -179,10 +181,88 @@ class EmployeesServiceTest {
     employee.setAge(30);
     employee.setSalary(25000.0);
     employee.setStatus(false);
+
     when(employeeRepositry.findById(1)).thenReturn(employee);
+
     assertThrows(EmployeeStatusException.class, () -> {
       employeesService.deleteEmployee(1);
     });
     verify(employeeRepositry, times(0)).delete(1);
+  }
+
+  @Test
+  void should_update_employee_when_status_true_and_salary_above_20000_then_success() {
+    Employee original = new Employee();
+    original.setId(1);
+    original.setName("Tom");
+    original.setGender("MALE");
+    original.setAge(35);
+    original.setSalary(18000.0);
+    original.setStatus(true);
+    Employee updated = new Employee();
+    updated.setId(1);
+    updated.setName("Tom");
+    updated.setGender("MALE");
+    updated.setAge(35);
+    updated.setSalary(25000.0);
+    updated.setStatus(true);
+
+    when(employeeRepositry.findById(1)).thenReturn(original);
+    when(employeeRepositry.update(1, updated)).thenReturn(true);
+
+    assertDoesNotThrow(() -> {
+      employeesService.updateEmployee(1, updated);
+    });
+    verify(employeeRepositry, times(1)).update(1, updated);
+  }
+
+  @Test
+  void should_not_update_employee_when_status_true_and_salary_below_20000_and_age_above_30_then_throw_exception() {
+    Employee original = new Employee();
+    original.setId(1);
+    original.setName("Tom");
+    original.setGender("MALE");
+    original.setAge(35);
+    original.setSalary(18000.0);
+    original.setStatus(true);
+    Employee updated = new Employee();
+    updated.setId(1);
+    updated.setName("Tom");
+    updated.setGender("MALE");
+    updated.setAge(35);
+    updated.setSalary(15000.0);
+    updated.setStatus(true);
+
+    when(employeeRepositry.findById(1)).thenReturn(original);
+
+    assertThrows(BigAgeAndLowSalaryException.class, () -> {
+      employeesService.updateEmployee(1, updated);
+    });
+    verify(employeeRepositry, times(0)).update(1, updated);
+  }
+
+  @Test
+  void should_not_update_employee_when_status_false_then_throw_exception() {
+    Employee original = new Employee();
+    original.setId(1);
+    original.setName("Tom");
+    original.setGender("MALE");
+    original.setAge(35);
+    original.setSalary(18000.0);
+    original.setStatus(false);
+    Employee updated = new Employee();
+    updated.setId(1);
+    updated.setName("Tom");
+    updated.setGender("MALE");
+    updated.setAge(35);
+    updated.setSalary(25000.0);
+    updated.setStatus(false);
+
+    when(employeeRepositry.findById(1)).thenReturn(original);
+
+    assertThrows(EmployeeStatusException.class, () -> {
+      employeesService.updateEmployee(1, updated);
+    });
+    verify(employeeRepositry, times(0)).update(1, updated);
   }
 }

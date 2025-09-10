@@ -137,7 +137,8 @@ class EmployeesTest {
         "name":"John",
         "age": 30,
         "gender": "MALE",
-        "salary": 6000
+        "salary": 60000,
+        "status": true
       }
       """;
     mockMvc.perform(post("/employees")
@@ -149,7 +150,8 @@ class EmployeesTest {
         "name":"John Smith",
         "age": 35,
         "gender": "MALE",
-        "salary": 8000
+        "salary": 80000,
+        "status": true
       }
       """;
     mockMvc.perform(put("/employees/{id}", 1)
@@ -164,7 +166,7 @@ class EmployeesTest {
       .andExpect(jsonPath("$.name").value("John Smith"))
       .andExpect(jsonPath("$.age").value(35))
       .andExpect(jsonPath("$.gender").value("MALE"))
-      .andExpect(jsonPath("$.salary").value(8000.0));
+      .andExpect(jsonPath("$.salary").value(80000.0));
   }
 
   @Test
@@ -174,7 +176,8 @@ class EmployeesTest {
         "name":"John",
         "age": 30,
         "gender": "MALE",
-        "salary": 6000
+        "salary": 60000,
+        "status": true
       }
       """;
     mockMvc.perform(post("/employees")
@@ -355,6 +358,96 @@ class EmployeesTest {
       .andExpect(status().isOk());
     mockMvc.perform(delete("/employees/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void should_update_employee_when_status_true_and_salary_above_20000_then_success() throws Exception {
+    String createRequestBody = """
+      {
+        "name":"Tom",
+        "age":35,
+        "gender":"MALE",
+        "salary":180000,
+        "status":true
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody))
+      .andExpect(status().isOk());
+    String updateRequestBody = """
+      {
+        "name":"Tom",
+        "age":35,
+        "gender":"MALE",
+        "salary":25000,
+        "status":true
+      }
+      """;
+    mockMvc.perform(put("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(updateRequestBody))
+      .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void should_not_update_employee_when_status_true_and_salary_below_20000_and_age_above_30_then_bad_request() throws Exception {
+    String createRequestBody = """
+      {
+        "name":"Tom",
+        "age":35,
+        "gender":"MALE",
+        "salary":180000,
+        "status":true
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody))
+      .andExpect(status().isOk());
+    String updateRequestBody = """
+      {
+        "name":"Tom",
+        "age":35,
+        "gender":"MALE",
+        "salary":15000,
+        "status":true
+      }
+      """;
+    mockMvc.perform(put("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(updateRequestBody))
+      .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void should_not_update_employee_when_status_false_then_bad_request() throws Exception {
+    String createRequestBody = """
+      {
+        "name":"Tom",
+        "age":35,
+        "gender":"MALE",
+        "salary":118000,
+        "status":false
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(createRequestBody))
+      .andExpect(status().isOk());
+    String updateRequestBody = """
+      {
+        "name":"Tom",
+        "age":35,
+        "gender":"MALE",
+        "salary":25000,
+        "status":false
+      }
+      """;
+    mockMvc.perform(put("/employees/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(updateRequestBody))
       .andExpect(status().isBadRequest());
   }
   }
