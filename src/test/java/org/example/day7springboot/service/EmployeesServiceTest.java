@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
+import org.example.day7springboot.exception.DuplicateEmployeeException;
 import org.example.day7springboot.exception.NotAmongLegalAgeException;
 import org.example.day7springboot.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
@@ -108,5 +109,26 @@ class EmployeesServiceTest {
       employeesService.createEmployee(employee);
     });
     verify(employeeRepositry, times(1)).save(employee);
+  }
+
+  @Test
+  void should_not_create_employee_with_same_name_and_gender() {
+    Employee existing = new Employee();
+    existing.setId(1);
+    existing.setName("Tom");
+    existing.setGender("MALE");
+    existing.setAge(25);
+    existing.setSalary(30000.0);
+
+    Employee newEmployee = new Employee();
+    newEmployee.setId(2);
+    newEmployee.setName("Tom");
+    newEmployee.setGender("MALE");
+    newEmployee.setAge(30);
+    newEmployee.setSalary(25000.0);
+    when(employeeRepositry.findAll()).thenReturn(java.util.List.of(existing));
+    assertThrows(DuplicateEmployeeException.class, () -> {
+      employeesService.createEmployee(newEmployee);
+    });
   }
 }

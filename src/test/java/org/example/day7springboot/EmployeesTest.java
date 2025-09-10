@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 //清内存
 //@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-class EmployeesTests {
+class EmployeesTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -268,5 +268,24 @@ class EmployeesTests {
     }
   }
 
-  }
+  @Test
+  void should_not_create_employee_with_same_name_and_gender() throws Exception {
+    String requestBody = """
+      {
+        "name":"Tom",
+        "age":30,
+        "gender":"MALE",
+        "salary":25000
+      }
+      """;
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(status().isOk());
 
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+      .andExpect(status().isBadRequest());
+  }
+  }
