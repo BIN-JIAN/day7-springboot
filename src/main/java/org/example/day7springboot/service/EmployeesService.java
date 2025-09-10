@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
+import org.example.day7springboot.exception.DuplicateEmployeeException;
 
 @Service
 public class EmployeesService {
@@ -18,6 +19,11 @@ public class EmployeesService {
   private EmployeeRepository employeeRepository;
 
   public Map<String, Long> createEmployee(Employee employee) {
+    boolean exists = employeeRepository.findAll().stream()
+      .anyMatch(e -> e.getName().equals(employee.getName()) && e.getGender().equals(employee.getGender()));
+    if (exists) {
+      throw new DuplicateEmployeeException("Employee with same name and gender already exists.");
+    }
     if (employee.getAge() < 18 || employee.getAge() > 65) {
       throw new NotAmongLegalAgeException("Employee age must be between 18 and 65.");
     } else if (employee.getAge() > 30 && employee.getSalary() < 20000) {
