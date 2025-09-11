@@ -1,18 +1,21 @@
 package org.example.day7springboot.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import org.example.day7springboot.dto.RequestDto;
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;
 import org.example.day7springboot.exception.EmployeeStatusException;
 import org.example.day7springboot.exception.NotAmongLegalAgeException;
-import org.example.day7springboot.repository.EmployeeRepository;
+import org.example.day7springboot.repository.impl.EmployeeRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class EmployeesServiceTest {
 
   @Mock
-  private EmployeeRepository employeeRepositry;
+  private EmployeeRepositoryImpl employeeRepositry;
   @InjectMocks
   private EmployeesService employeesService;
 
@@ -163,9 +166,8 @@ class EmployeesServiceTest {
     employee.setSalary(25000.0);
     employee.setStatus(true);
 
-    when(employeeRepositry.findById(1)).thenReturn(employee);
     when(employeeRepositry.delete(1)).thenReturn(true);
-
+    doReturn(employee).when(employeeRepositry).findById(anyLong());
     assertDoesNotThrow(() -> {
       employeesService.deleteEmployee(1);
     });
@@ -183,7 +185,6 @@ class EmployeesServiceTest {
     employee.setStatus(false);
 
     when(employeeRepositry.findById(1)).thenReturn(employee);
-
     assertThrows(EmployeeStatusException.class, () -> {
       employeesService.deleteEmployee(1);
     });
@@ -199,21 +200,20 @@ class EmployeesServiceTest {
     original.setAge(35);
     original.setSalary(18000.0);
     original.setStatus(true);
-    Employee updated = new Employee();
-    updated.setId(1);
-    updated.setName("Tom");
-    updated.setGender("MALE");
-    updated.setAge(35);
-    updated.setSalary(25000.0);
-    updated.setStatus(true);
+
+    RequestDto updatedDto = new org.example.day7springboot.dto.RequestDto();
+    updatedDto.setName("Tom");
+    updatedDto.setGender("MALE");
+    updatedDto.setAge(35);
+    updatedDto.setSalary(25000.0);
 
     when(employeeRepositry.findById(1)).thenReturn(original);
-    when(employeeRepositry.update(1, updated)).thenReturn(true);
+    when(employeeRepositry.update(1, updatedDto)).thenReturn(true);
 
     assertDoesNotThrow(() -> {
-      employeesService.updateEmployee(1, updated);
+      employeesService.updateEmployee(1, updatedDto);
     });
-    verify(employeeRepositry, times(1)).update(1, updated);
+    verify(employeeRepositry, times(1)).update(1, updatedDto);
   }
 
   @Test
@@ -225,20 +225,16 @@ class EmployeesServiceTest {
     original.setAge(35);
     original.setSalary(18000.0);
     original.setStatus(true);
-    Employee updated = new Employee();
-    updated.setId(1);
-    updated.setName("Tom");
-    updated.setGender("MALE");
-    updated.setAge(35);
-    updated.setSalary(15000.0);
-    updated.setStatus(true);
+    RequestDto updatedDto = new org.example.day7springboot.dto.RequestDto();
+    updatedDto.setName("Tom");
+    updatedDto.setGender("MALE");
+    updatedDto.setAge(35);
+    updatedDto.setSalary(15000.0);
 
     when(employeeRepositry.findById(1)).thenReturn(original);
 
-    assertThrows(BigAgeAndLowSalaryException.class, () -> {
-      employeesService.updateEmployee(1, updated);
-    });
-    verify(employeeRepositry, times(0)).update(1, updated);
+    assertThrows(BigAgeAndLowSalaryException.class, () -> employeesService.updateEmployee(1, updatedDto));
+    verify(employeeRepositry, times(0)).update(1, updatedDto);
   }
 
   @Test
@@ -250,19 +246,15 @@ class EmployeesServiceTest {
     original.setAge(35);
     original.setSalary(18000.0);
     original.setStatus(false);
-    Employee updated = new Employee();
-    updated.setId(1);
-    updated.setName("Tom");
-    updated.setGender("MALE");
-    updated.setAge(35);
-    updated.setSalary(25000.0);
-    updated.setStatus(false);
+    RequestDto updatedDto = new org.example.day7springboot.dto.RequestDto();
+    updatedDto.setName("Tom");
+    updatedDto.setGender("MALE");
+    updatedDto.setAge(35);
+    updatedDto.setSalary(25000.0);
 
     when(employeeRepositry.findById(1)).thenReturn(original);
 
-    assertThrows(EmployeeStatusException.class, () -> {
-      employeesService.updateEmployee(1, updated);
-    });
-    verify(employeeRepositry, times(0)).update(1, updated);
+    assertThrows(EmployeeStatusException.class, () -> employeesService.updateEmployee(1, updatedDto));
+    verify(employeeRepositry, times(0)).update(1, updatedDto);
   }
 }

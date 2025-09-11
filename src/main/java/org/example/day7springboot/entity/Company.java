@@ -24,7 +24,7 @@ public class Company {
   @JoinColumn(name = "company_id")
   private List<Employee> employees = new ArrayList<>();
 
-  public Company() {
+  public Company(String cosco) {
 
   }
 

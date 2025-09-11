@@ -23,9 +23,10 @@ public class EmployeesController {
   private EmployeesService employeesService;
 
   @PostMapping("/employees")
-  public Map<String, Long> createEmployee(@RequestBody Employee employee) {
-    return employeesService.createEmployee(employee);
+  public ResponseEntity<Map<String, Long>> createEmployee(@RequestBody Employee employee) {
+    return ResponseEntity.ok(employeesService.createEmployee(employee));
   }
+
 
   @GetMapping("/employees/{id}")
   public Employee getEmployee(@PathVariable long id) {

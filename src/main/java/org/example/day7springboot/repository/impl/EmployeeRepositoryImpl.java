@@ -40,6 +40,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
       existingEmployee.setAge(requestDto.getAge());
       existingEmployee.setSalary(requestDto.getSalary());
       existingEmployee.setGender(requestDto.getGender());
+      existingEmployee.setStatus(requestDto.isStatus());
       employeeJpaRepository.save(existingEmployee);
       return true;
     }
