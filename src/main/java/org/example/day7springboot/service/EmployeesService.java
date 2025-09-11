@@ -5,26 +5,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.example.day7springboot.entity.Employee;
-import org.example.day7springboot.exception.NotAmongLegalAgeException;
-import org.example.day7springboot.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;
 import org.example.day7springboot.exception.EmployeeStatusException;
+import org.example.day7springboot.exception.NotAmongLegalAgeException;
+import org.example.day7springboot.repository.EmployeeRepository;
+import org.example.day7springboot.repository.impl.EmployeeRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 @Service
 public class EmployeesService {
+
   @Autowired
+  //private EmployeeRepository employeeRepository;
   private EmployeeRepository employeeRepository;
 
   public Map<String, Long> createEmployee(Employee employee) {
     validEmployeeForCreate(employee);
+    //status给一个默认值;
+    //employee.setStatus(true);
     employeeRepository.save(employee);
     return Map.of("id", employee.getId());
   }
-
 
 
   public Employee getEmployee(long id) {
@@ -41,6 +45,7 @@ public class EmployeesService {
     return employeeRepository.findAll();
   }
 
+  //状态码放到controller
   public ResponseEntity<Void> updateEmployee(long id, Employee updatedEmployee) {
     Employee original = employeeRepository.findById(id);
     if (original == null) {
@@ -81,19 +86,22 @@ public class EmployeesService {
     return all.subList(startIndex, endIndex);
   }
 
-  public void clearEmployee() {
-    employeeRepository.clear();
-  }
+//  public void clearEmployee() {
+//    employeeRepository.clear();
+//  }
+
   private void validEmployeeForCreate(Employee employee) {
     if (employeeRepository.findAll().stream()
-      .anyMatch(e -> e.getName().equals(employee.getName()) && e.getGender().equals(employee.getGender()))) {
+      .anyMatch(e -> e.getName().equals(employee.getName()) && e.getGender()
+        .equals(employee.getGender()))) {
       throw new DuplicateEmployeeException("Employee with same name and gender already exists.");
     }
     if (employee.getAge() < 18 || employee.getAge() > 65) {
       throw new NotAmongLegalAgeException("Employee age must be between 18 and 65.");
     }
-    if (employee.getAge() > 30 && employee.getSalary() < 20000) {
-      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
+    if (employee.getAge() >= 30 && employee.getSalary() < 20000) {
+      throw new BigAgeAndLowSalaryException(
+        "Employees over 30 must have a salary of at least 20000.");
     }
   }
 
@@ -102,7 +110,8 @@ public class EmployeesService {
       throw new EmployeeStatusException("Employee status is false, cannot update.");
     }
     if (updatedEmployee.getSalary() < 20000 && updatedEmployee.getAge() > 30) {
-      throw new BigAgeAndLowSalaryException("Employees over 30 must have a salary of at least 20000.");
+      throw new BigAgeAndLowSalaryException(
+        "Employees over 30 must have a salary of at least 20000.");
     }
   }
 

@@ -1,7 +1,18 @@
 package org.example.day7springboot.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "t_employee")
 public class Employee {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   private String name;
   private int age;
@@ -9,7 +20,10 @@ public class Employee {
   private String gender;
   private boolean status;
 
-  public Employee(long id , String name, int age, String gender, double salary) {
+  @Column(name = "company_id")
+  private long companyId;
+
+  public Employee(long id, String name, int age, String gender, double salary) {
     this.id = id;
     this.name = name;
     this.age = age;

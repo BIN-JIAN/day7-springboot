@@ -1,7 +1,7 @@
 package org.example.day7springboot.controller;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.service.EmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,10 @@ public class EmployeesController {
   public Map<String, Long> createEmployee(@RequestBody Employee employee) {
     return employeesService.createEmployee(employee);
   }
+
   @GetMapping("/employees/{id}")
   public Employee getEmployee(@PathVariable long id) {
-   return employeesService.getEmployee(id);
+    return employeesService.getEmployee(id);
   }
 
   @GetMapping("/employees/gender")
@@ -42,23 +43,24 @@ public class EmployeesController {
 
 
   @PutMapping("/employees/{id}")
-  public ResponseEntity<Void> updateEmployee(@PathVariable long id, @RequestBody Employee updatedEmployee) {
-    return employeesService.updateEmployee(id,updatedEmployee);
+  public ResponseEntity<Void> updateEmployee(@PathVariable long id,
+    @RequestBody Employee updatedEmployee) {
+    return employeesService.updateEmployee(id, updatedEmployee);
   }
 
   @DeleteMapping("/employees/{id}")
   public ResponseEntity<Void> deleteEmployee(@PathVariable long id) {
-  return employeesService.deleteEmployee(id);
+    return employeesService.deleteEmployee(id);
   }
 
 
   @GetMapping("/employees1")
   public Object getAllEmployees1(@RequestParam(required = false) Integer page,
     @RequestParam(required = false) Integer size) {
-   return employeesService.getAllEmployees1(page,size);
+    return employeesService.getAllEmployees1(page, size);
   }
 
-  public void clearEmployee() {
-    employeesService.clearEmployee();
-  }
+//  public void clearEmployee() {
+//    employeesService.clearEmployee();
+//  }
 }

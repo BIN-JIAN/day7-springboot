@@ -1,9 +1,7 @@
 package org.example.day7springboot.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.example.day7springboot.entity.Company;
-
 import org.example.day7springboot.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,32 +30,30 @@ public class CompanyController {
     return companyService.getCompanies();
   }
 
-  @GetMapping("/companies/{name}")
-  public Company getCompanyByName(@PathVariable String name) {
-    return companyService.getCompanyByName(name);
+  @GetMapping("/companies/{id}")
+  public Company getCompanyById(@PathVariable long id) {
+    return companyService.getCompanyById(id);
   }
 
-//
+  //
   @PutMapping("/companies/{id}")
   public String updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) {
-      return companyService.updateCompany(id,updatedCompany);
+    return companyService.updateCompany(id, updatedCompany);
   }
-//
+
+  //
   @DeleteMapping("/companies/{id}")
-  public ResponseEntity<Void> deleteCompany(@PathVariable int id) {
-  return companyService.deleteCompany(id);
+  public ResponseEntity<Void> deleteCompany(@PathVariable long id) {
+    return companyService.deleteCompany(id);
   }
-//  //该类型 加一个异常处理器
+
+  //  //该类型 加一个异常处理器
 //
   @GetMapping("/companies1")
   public Object getAllCompanies(
     @RequestParam(required = false) Integer page,
     @RequestParam(required = false) Integer size) {
-  return companyService.getAllCompanies(page,size);
-  }
-
-  public void clearCompanies() {
-     companyService.clearCompanies();
+    return companyService.getAllCompanies(page, size);
   }
 
 

@@ -1,10 +1,11 @@
 package org.example.day7springboot.service;
 
-import jakarta.servlet.http.PushBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.example.day7springboot.entity.Company;
+import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.repository.CompanyRepository;
+import org.example.day7springboot.repository.impl.CompanyRepository1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,18 +22,16 @@ public class CompanyService {
     return company;
   }
 
-  public Company getCompanyByName(String name) {
-    return companyRepository.getCompanies().stream()
-      .filter(company -> company.getName().equals(name))
-      .findFirst()
-      .orElse(null);
+  public Company getCompanyById(long id) {
+   return companyRepository.getCompanyById(id);
   }
+
 
   public List<Company> getCompanies() {
     return companyRepository.getCompanies();
   }
 
-  public String updateCompany(int id, Company updatedCompany) {
+  public String updateCompany(long id, Company updatedCompany) {
     boolean updated = companyRepository.updateCompany(id, updatedCompany);
     if (updated) {
       return "Company updated successfully";
@@ -40,7 +39,7 @@ public class CompanyService {
     return "Company not found";
   }
 
-  public ResponseEntity<Void> deleteCompany(int id) {
+  public ResponseEntity<Void> deleteCompany(long id) {
     boolean deleted = companyRepository.deleteCompany(id);
     if (deleted) {
       return ResponseEntity.noContent().build();
@@ -61,9 +60,6 @@ public class CompanyService {
     return companyRepository.getCompanies().subList(startIndex, endIndex);
   }
 
-  public void clearCompanies() {
-    companyRepository.clear();
-  }
 }
 
 
