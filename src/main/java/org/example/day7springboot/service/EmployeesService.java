@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.example.day7springboot.dto.RequestDto;
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;
@@ -46,13 +47,13 @@ public class EmployeesService {
   }
 
   //状态码放到controller
-  public ResponseEntity<Void> updateEmployee(long id, Employee updatedEmployee) {
+  public ResponseEntity<Void> updateEmployee(long id, RequestDto requestDto) {
     Employee original = employeeRepository.findById(id);
     if (original == null) {
       return ResponseEntity.notFound().build();
     }
-    validEmployeeForUpdate(original, updatedEmployee);
-    boolean updated = employeeRepository.update(id, updatedEmployee);
+    validEmployeeForUpdate(original, requestDto);
+    boolean updated = employeeRepository.update(id, requestDto);
     if (updated) {
       return ResponseEntity.noContent().build();
     }
@@ -105,11 +106,11 @@ public class EmployeesService {
     }
   }
 
-  private void validEmployeeForUpdate(Employee original, Employee updatedEmployee) {
+  private void validEmployeeForUpdate(Employee original, RequestDto requestDto) {
     if (!original.isStatus()) {
       throw new EmployeeStatusException("Employee status is false, cannot update.");
     }
-    if (updatedEmployee.getSalary() < 20000 && updatedEmployee.getAge() > 30) {
+    if (requestDto.getSalary() < 20000 && requestDto.getAge() > 30) {
       throw new BigAgeAndLowSalaryException(
         "Employees over 30 must have a salary of at least 20000.");
     }

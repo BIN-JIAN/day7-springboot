@@ -2,6 +2,7 @@ package org.example.day7springboot.controller;
 
 import java.util.List;
 import java.util.Map;
+import org.example.day7springboot.dto.RequestDto;
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.service.EmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,8 @@ public class EmployeesController {
 
   @PutMapping("/employees/{id}")
   public ResponseEntity<Void> updateEmployee(@PathVariable long id,
-    @RequestBody Employee updatedEmployee) {
-    return employeesService.updateEmployee(id, updatedEmployee);
+    @RequestBody RequestDto requestDto) {
+    return employeesService.updateEmployee(id, requestDto);
   }
 
   @DeleteMapping("/employees/{id}")

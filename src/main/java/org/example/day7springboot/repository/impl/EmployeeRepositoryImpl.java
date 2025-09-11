@@ -2,6 +2,7 @@ package org.example.day7springboot.repository.impl;
 
 import java.util.List;
 import java.util.Optional;
+import org.example.day7springboot.dto.RequestDto;
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.repository.EmployeeRepository;
 import org.example.day7springboot.repository.dao.EmployeeJpaRepository;
@@ -30,16 +31,15 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
   }
 
   @Override
-  public boolean update(long id, Employee employee) {
+  public boolean update(long id, RequestDto requestDto) {
     Optional<Employee> optionalEmployee = employeeJpaRepository.findById(id);
 
     if (optionalEmployee.isPresent()) {
       Employee existingEmployee = optionalEmployee.get();
-      existingEmployee.setName(employee.getName());
-      existingEmployee.setAge(employee.getAge());
-      existingEmployee.setSalary(employee.getSalary());
-      existingEmployee.setGender(employee.getGender());
-      existingEmployee.setStatus(employee.isStatus());
+      existingEmployee.setName(requestDto.getName());
+      existingEmployee.setAge(requestDto.getAge());
+      existingEmployee.setSalary(requestDto.getSalary());
+      existingEmployee.setGender(requestDto.getGender());
       employeeJpaRepository.save(existingEmployee);
       return true;
     }
