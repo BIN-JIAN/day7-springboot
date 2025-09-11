@@ -2,7 +2,7 @@ spring:
   application:
     name: day7-springboot
   datasource:
-    url: jdbc:mysql://localhost:3306/bootcamp
+    url: jdbc:mysql://localhost:3306/bootcamp?useSSL=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: "root"
     password: "123456"
@@ -10,4 +10,9 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true

@@ -1,4 +1,4 @@
-package org.example.day7springboot.controller;
+package org.example.day7springboot.handler;
 
 import org.example.day7springboot.exception.BigAgeAndLowSalaryException;
 import org.example.day7springboot.exception.DuplicateEmployeeException;

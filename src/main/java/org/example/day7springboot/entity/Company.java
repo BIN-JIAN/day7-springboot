@@ -43,4 +43,12 @@ public class Company {
   public void setName(String name) {
     this.name = name;
   }
+
+  public Object getEmployees() {
+    return null;
+  }
+
+  public void setEmployees(List<Employee> employees) {
+    this.employees = employees;
+  }
 }

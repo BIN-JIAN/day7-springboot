@@ -1,7 +1,9 @@
 package org.example.day7springboot.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.example.day7springboot.entity.Company;
 import org.example.day7springboot.entity.Employee;
 import org.example.day7springboot.repository.CompanyRepository;
@@ -60,6 +62,15 @@ public class CompanyService {
     return companyRepository.getCompanies().subList(startIndex, endIndex);
   }
 
+  public ResponseEntity<?> getCompanyDetailById(long id) {
+    Company company = getCompanyById(id);
+    if (company == null) {
+      return ResponseEntity.notFound().build();
+    }
+    Map<String, Object> result = new HashMap<>();
+    result.put("companyName", company.getName());
+    result.put("employees", company.getEmployees());
+    return ResponseEntity.ok(result);
+  }
+
 }
-
-

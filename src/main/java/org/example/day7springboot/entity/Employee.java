@@ -82,4 +82,12 @@ public class Employee {
   public void setStatus(boolean status) {
     this.status = status;
   }
+
+  public long getCompanyId() {
+    return companyId;
+  }
+
+  public void setCompanyId(long companyId) {
+    this.companyId = companyId;
+  }
 }

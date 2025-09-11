@@ -1,6 +1,8 @@
 package org.example.day7springboot.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.example.day7springboot.entity.Company;
 import org.example.day7springboot.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +33,11 @@ public class CompanyController {
   }
 
   @GetMapping("/companies/{id}")
-  public Company getCompanyById(@PathVariable long id) {
-    return companyService.getCompanyById(id);
+  public ResponseEntity<?> getCompanyById(@PathVariable long id) {
+    return companyService.getCompanyDetailById(id);
   }
 
-  //
+
   @PutMapping("/companies/{id}")
   public String updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) {
     return companyService.updateCompany(id, updatedCompany);
